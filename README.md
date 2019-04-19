@@ -5,6 +5,17 @@ This library is a set of useful tools, shapes and manipulators that I developed 
 projects, including large ones like the Snappy-Reprap printed 3D printer.
 
 
+## Installation
+1. Download the .zip or .tar.gz release file for this library.
+2. Unpack it.  It should create a `BOSL-v1.0` directory with the library files within it.
+3. Rename the directory to `BOSL`.
+4. Move the `BOSL` directory into the apropriate OpenSCAD library directory for your platform:
+    - Windows: `My Documents\OpenSCAD\libraries\`
+    - Linux: `$HOME/.local/share/OpenSCAD/libraries/`
+    - Mac OS X: `$HOME/Documents/OpenSCAD/libraries/`
+5. Restart OpenSCAD.
+
+
 ## Terminology
 For purposes of the BOSL library, the following terms apply:
 - **Left**: Towards X-
