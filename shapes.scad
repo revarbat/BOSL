@@ -1320,7 +1320,7 @@ module staggered_sphere(r=undef, d=undef, circum=false, align=V_CENTER) {
 			) each [[v1,v4,v3], [v1,v2,v4]]
 		]
 	);
-	polyhedron(points=pts, faces=faces);
+	zrot((floor(sides/4)%2==1)? 180/sides : 0) polyhedron(points=pts, faces=faces);
 }
 
 
