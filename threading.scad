@@ -76,7 +76,7 @@ use <math.scad>
 //   trapezoidal_threaded_rod(d=10, l=40, pitch=3, thread_angle=15, left_handed=true, starts=3, $fn=36);
 //   trapezoidal_threaded_rod(d=25, l=40, pitch=10, thread_depth=8/3, thread_angle=50, starts=4, center=false, $fa=2, $fs=2);
 //   trapezoidal_threaded_rod(d=50, l=35, pitch=8, thread_angle=30, starts=3, bevel=true);
-//   trapezoidal_threaded_rod(l=25, d=10, pitch=2, thread_angle=15, starts=3, $fa=1, $fs=1, orient=ORIENT_X, anchor=UP);
+//   trapezoidal_threaded_rod(l=25, d=10, pitch=2, thread_angle=15, starts=3, $fa=1, $fs=1, orient=ORIENT_X, align=V_UP);
 module trapezoidal_threaded_rod(
 	d=10,
 	l=100,
@@ -262,7 +262,7 @@ module trapezoidal_threaded_rod(
 //   orient = Orientation of the nut.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
 //   align = Alignment of the nut.  Use the `V_` constants from `constants.scad`.  Default: `V_CENTER`.
 // Examples(Med):
-//   trapezoidal_threaded_nut(od=16, id=8, h=8, pitch=2, slop=0.2, anchor=UP);
+//   trapezoidal_threaded_nut(od=16, id=8, h=8, pitch=2, slop=0.2, align=V_UP);
 //   trapezoidal_threaded_nut(od=17.4, id=10, h=10, pitch=2, slop=0.2, left_handed=true);
 //   trapezoidal_threaded_nut(od=17.4, id=10, h=10, pitch=2, thread_angle=15, starts=3, $fa=1, $fs=1);
 module trapezoidal_threaded_nut(
@@ -482,14 +482,14 @@ module buttress_threaded_rod(
 //   bevel = if true, bevel the thread ends.  Default: false
 //   slop = printer slop calibration to allow for tight fitting of parts.  default=0.2
 //   orient = Orientation of the nut.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
-//   anchor = Alignment of the nut.  Use the constants from `constants.scad`.  Default: `CENTER`.
+//   align = Alignment of the nit.  Use the `V_` constants from `constants.scad`.  Default: `V_CENTER`.
 // Examples:
 //   buttress_threaded_nut(od=16, id=8, h=8, pitch=1.25, left_handed=true, slop=0.2, $fa=1, $fs=1);
 module buttress_threaded_nut(
 	od=16, id=10, h=10,
 	pitch=2, left_handed=false,
 	bevel=false, slop=undef,
-	orient=ORIENT_Z, anchor=CENTER
+	orient=ORIENT_Z, align=V_CENTER
 ) {
 	depth = pitch * 3/4;
 	profile = [
