@@ -1867,26 +1867,28 @@ module half_of(v=V_UP, cp=[0,0,0], s=100, planar=false)
 // Module: top_half()
 //
 // Usage:
-//   top_half([cp], [s]) ...
+//   top_half([z|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a horizontal X-Y cut plane, and masks away everything that is below it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane up by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   z = The Z coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes equivalent to a planar `back_half()`.
 //
 // Examples(Spin):
 //   top_half() sphere(r=20);
+//   top_half(z=5) sphere(r=20);
 //   top_half(cp=5) sphere(r=20);
 //   top_half(cp=[0,0,-8]) sphere(r=20);
 // Example(2D):
 //   top_half(planar=true) circle(r=20);
-module top_half(s=100, cp=[0,0,0], planar=false)
+module top_half(s=100, z=undef, cp=[0,0,0], planar=false)
 {
 	dir = planar? V_BACK : V_UP;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(z)? [0,0,z] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
@@ -1904,26 +1906,28 @@ module top_half(s=100, cp=[0,0,0], planar=false)
 // Module: bottom_half()
 //
 // Usage:
-//   bottom_half([cp], [s]) ...
+//   bottom_half([z|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a horizontal X-Y cut plane, and masks away everything that is above it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane down by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   z = The Z coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes equivalent to a planar `front_half()`.
 //
 // Examples:
 //   bottom_half() sphere(r=20);
+//   bottom_half(z=-10) sphere(r=20);
 //   bottom_half(cp=-10) sphere(r=20);
 //   bottom_half(cp=[0,0,10]) sphere(r=20);
 // Example(2D):
 //   bottom_half(planar=true) circle(r=20);
-module bottom_half(s=100, cp=[0,0,0], planar=false)
+module bottom_half(s=100, z=undef, cp=[0,0,0], planar=false)
 {
 	dir = planar? V_FWD : V_DOWN;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(z)? [0,0,z] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
@@ -1941,26 +1945,28 @@ module bottom_half(s=100, cp=[0,0,0], planar=false)
 // Module: left_half()
 //
 // Usage:
-//   left_half([cp], [s]) ...
+//   left_half([x|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a vertical Y-Z cut plane, and masks away everything that is right of it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane left by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   x = The X coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes a 2D operation.
 //
 // Examples:
 //   left_half() sphere(r=20);
+//   left_half(x=-8) sphere(r=20);
 //   left_half(cp=-8) sphere(r=20);
 //   left_half(cp=[8,0,0]) sphere(r=20);
 // Example(2D):
 //   left_half(planar=true) circle(r=20);
-module left_half(s=100, cp=[0,0,0], planar=false)
+module left_half(s=100, x=undef, cp=[0,0,0], planar=false)
 {
 	dir = V_LEFT;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(x)? [x,0,0] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
@@ -1978,26 +1984,28 @@ module left_half(s=100, cp=[0,0,0], planar=false)
 // Module: right_half()
 //
 // Usage:
-//   right_half([cp], [s]) ...
+//   right_half([x|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a vertical Y-Z cut plane, and masks away everything that is left of it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane right by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   x = The X coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes a 2D operation.
 //
 // Examples(FlatSpin):
 //   right_half() sphere(r=20);
+//   right_half(x=-5) sphere(r=20);
 //   right_half(cp=-5) sphere(r=20);
 //   right_half(cp=[-5,0,0]) sphere(r=20);
 // Example(2D):
 //   right_half(planar=true) circle(r=20);
-module right_half(s=100, cp=[0,0,0], planar=false)
+module right_half(s=100, x=undef, cp=[0,0,0], planar=false)
 {
 	dir = V_RIGHT;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(x)? [x,0,0] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
@@ -2015,26 +2023,28 @@ module right_half(s=100, cp=[0,0,0], planar=false)
 // Module: front_half()
 //
 // Usage:
-//   front_half([cp], [s]) ...
+//   front_half([y|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a vertical X-Z cut plane, and masks away everything that is behind it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane forward by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   y = The Y coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes a 2D operation.
 //
 // Examples(FlatSpin):
 //   front_half() sphere(r=20);
+//   front_half(y=5) sphere(r=20);
 //   front_half(cp=5) sphere(r=20);
 //   front_half(cp=[0,5,0]) sphere(r=20);
 // Example(2D):
 //   front_half(planar=true) circle(r=20);
-module front_half(s=100, cp=[0,0,0], planar=false)
+module front_half(s=100, y=undef, cp=[0,0,0], planar=false)
 {
 	dir = V_FWD;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(y)? [0,y,0] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
@@ -2052,26 +2062,28 @@ module front_half(s=100, cp=[0,0,0], planar=false)
 // Module: back_half()
 //
 // Usage:
-//   back_half([cp], [s]) ...
+//   back_half([y|cp], [s]) ...
 //
 // Description:
 //   Slices an object at a vertical X-Z cut plane, and masks away everything that is in front of it.
 //
 // Arguments:
 //   cp = If given as a scalar, moves the cut plane back by the given amount.  If given as a point, specifies a point on the cut plane.  Default: [0,0,0]
+//   y = The Y coordinate of the cut-plane, if given.  Use instead of `cp`.
 //   s = Mask size to use.  Use a number larger than twice your object's largest axis.  If you make this too large, it messes with centering your view.  Default: 100
 //   planar = If true, this becomes a 2D operation.
 //
 // Examples:
 //   back_half() sphere(r=20);
+//   back_half(y=8) sphere(r=20);
 //   back_half(cp=8) sphere(r=20);
 //   back_half(cp=[0,-10,0]) sphere(r=20);
 // Example(2D):
 //   back_half(planar=true) circle(r=20);
-module back_half(s=100, cp=[0,0,0], planar=false)
+module back_half(s=100, y=undef, cp=[0,0,0], planar=false)
 {
 	dir = V_BACK;
-	cp = is_scalar(cp)? cp*dir : cp;
+	cp = is_scalar(y)? [0,y,0] : is_scalar(cp)? cp*dir : cp;
 	translate(cp) difference() {
 		translate(-cp) children();
 		translate(-dir*s/2) {
