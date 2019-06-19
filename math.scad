@@ -600,7 +600,7 @@ function array_subindex(v, idx) = [
 //   list_range(4);                  // Returns [0,1,2,3]
 //   list_range(n=4, step=2);        // Returns [0,2,4,6]
 //   list_range(n=4, s=3, step=3);   // Returns [3,6,9,12]
-//   list_range(n=4, s=3, e=9, step=3);  // Returns [3,6,9]
+//   list_range(n=5, s=0, e=10);     // Returns [0, 2.5, 5, 7.5, 10]
 //   list_range(e=3);                // Returns [0,1,2,3]
 //   list_range(e=6, step=2);        // Returns [0,2,4,6]
 //   list_range(s=3, e=5);           // Returns [3,4,5]
@@ -608,7 +608,7 @@ function array_subindex(v, idx) = [
 //   list_range(s=4, e=8, step=2);   // Returns [4,6,8]
 //   list_range(n=4, s=[3,4], step=[2,3]);  // Returns [[3,4], [5,7], [7,10], [9,13]]
 function list_range(n=undef, s=0, e=undef, step=1) =
-	(n!=undef && e!=undef)? [for (i=[0:n-1]) let(v=s+step*i) if (v<=e) v] :
+	(n!=undef && e!=undef)? [for (i=[0:1:n-1]) s+(e-s)*i/(n-1)] :
 	(n!=undef)? [for (i=[0:n-1]) let(v=s+step*i) v] :
 	(e!=undef)? [for (v=[s:step:e]) v] :
 	assertion(false, "Must supply one of `n` or `e`.");
