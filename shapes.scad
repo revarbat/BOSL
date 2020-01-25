@@ -513,7 +513,7 @@ module prismoid(
 //   center = If given, overrides `align`.  A true value sets `align=V_CENTER`, false sets `align=V_UP`.
 module trapezoid(size1=[1,1], size2=[1,1], h=1, center=false) {
 	deprecate("trapezoid()", "prismoid()");
-	prismoid(size=size, size2=size2, h=h, center=center);
+	prismoid(size1=size1, size2=size2, h=h, center=center);
 }
 
 
