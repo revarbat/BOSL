@@ -105,8 +105,13 @@ module cuboid(
 		}
 	} else {
 		majrots = [[0,90,0], [90,0,0], [0,0,0]];
-		if (chamfer != undef) assertion(chamfer <= min(size)/2, "chamfer must be smaller than half the cube width, length, or height.");
-		if (fillet != undef)  assertion(fillet <= min(size)/2, "fillet must be smaller than half the cube width, length, or height.");
+		
+		// Not the most elegant, but should work fine.
+		// Size for edge E can be ignored if there are only zeros in both edges !E
+		relevantsize = [for(a=[0:2]) if(max(edges[(a+1)%3]+edges[(a+2)%3])>0) size[a]];
+		
+		if (chamfer != undef && len(relevantsize) > 0) assertion(chamfer <= min(relevantsize)/2, "chamfer must be smaller than half the cube width, length, or height.");
+		if (fillet != undef && len(relevantsize) > 0 )  assertion(fillet <= min(relevantsize)/2, "fillet must be smaller than half the cube width, length, or height.");
 		algn = (!is_def(center))? (is_scalar(align)? align*V_UP : align) : (center==true)? V_CENTER : V_ALLPOS;
 		translate(vmul(size/2, algn)) {
 			if (chamfer != undef) {
