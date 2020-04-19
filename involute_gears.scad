@@ -26,6 +26,7 @@
 
 
 use <transforms.scad>
+use <math.scad>
 include <constants.scad>
 
 
@@ -147,6 +148,37 @@ function base_radius(mm_per_tooth=5, number_of_teeth=11, pressure_angle=28)
 //   interior = If true, create a mask for difference()ing from something else.
 // Example(2D):
 //   gear_tooth_profile(mm_per_tooth=5, number_of_teeth=20, pressure_angle=20);
+function _gear_polar(r,theta)   = r*[sin(theta), cos(theta)];                      //convert polar to cartesian coordinates
+function _gear_iang(r1,r2)      = sqrt((r2/r1)*(r2/r1) - 1)/PI*180 - acos(r1/r2);  //unwind a string this many degrees to go from radius r1 to radius r2
+function _gear_q7(f,r,b,r2,t,s) = _gear_q6(b,s,t,(1-f)*max(b,r)+f*r2);                   //radius a fraction f up the curved side of the tooth
+function _gear_q6(b,s,t,d)      = _gear_polar(d,s*(_gear_iang(b,d)+t));                        //point at radius d on the involute curve
+function gear_tooth_profile(
+	mm_per_tooth    = 3,     //this is the "circular pitch", the circumference of the pitch circle divided by the number of teeth
+	number_of_teeth = 11,    //total number of teeth around the entire perimeter
+	pressure_angle  = 28,    //Controls how straight or bulged the tooth sides are. In degrees.
+	backlash        = 0.0,   //gap between two meshing teeth, in the direction along the circumference of the pitch circle
+	bevelang        = 0.0,   //Gear face angle for bevelled gears.
+	clearance       = undef, //gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
+	interior        = false
+) = let(
+		p = pitch_radius(mm_per_tooth, number_of_teeth),
+		c = outer_radius(mm_per_tooth, number_of_teeth, clearance, interior),
+		r = root_radius(mm_per_tooth, number_of_teeth, clearance, interior),
+		b = base_radius(mm_per_tooth, number_of_teeth, pressure_angle),
+		t  = mm_per_tooth/2-backlash/2,               //tooth thickness at pitch circle
+		k  = -_gear_iang(b, p) - t/2/p/PI*180,              //angle to where involute meets base circle on each side of tooth
+		mat = matrix3_scale([1,1/cos(bevelang), 1]) * matrix3_translate([0,-r,0]),
+		points=[
+			_gear_polar(r, -181/number_of_teeth),
+			_gear_polar(r, r<b ? k : -180/number_of_teeth),
+			_gear_q7(0/5,r,b,c,k, 1), _gear_q7(1/5,r,b,c,k, 1), _gear_q7(2/5,r,b,c,k, 1), _gear_q7(3/5,r,b,c,k, 1), _gear_q7(4/5,r,b,c,k, 1), _gear_q7(5/5,r,b,c,k, 1),
+			_gear_q7(5/5,r,b,c,k,-1), _gear_q7(4/5,r,b,c,k,-1), _gear_q7(3/5,r,b,c,k,-1), _gear_q7(2/5,r,b,c,k,-1), _gear_q7(1/5,r,b,c,k,-1), _gear_q7(0/5,r,b,c,k,-1),
+			_gear_polar(r, r<b ? -k : 180/number_of_teeth),
+			_gear_polar(r, 181/number_of_teeth),
+		]
+	) matrix3_apply(points, [mat]);
+
+
 module gear_tooth_profile(
 	mm_per_tooth    = 3,     //this is the "circular pitch", the circumference of the pitch circle divided by the number of teeth
 	number_of_teeth = 11,    //total number of teeth around the entire perimeter
@@ -156,31 +188,16 @@ module gear_tooth_profile(
 	clearance       = undef, //gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
 	interior        = false
 ) {
-	function polar(r,theta)   = r*[sin(theta), cos(theta)];                      //convert polar to cartesian coordinates
-	function iang(r1,r2)      = sqrt((r2/r1)*(r2/r1) - 1)/PI*180 - acos(r1/r2);  //unwind a string this many degrees to go from radius r1 to radius r2
-	function q7(f,r,b,r2,t,s) = q6(b,s,t,(1-f)*max(b,r)+f*r2);                   //radius a fraction f up the curved side of the tooth
-	function q6(b,s,t,d)      = polar(d,s*(iang(b,d)+t));                        //point at radius d on the involute curve
-
-	p = pitch_radius(mm_per_tooth, number_of_teeth);
-	c = outer_radius(mm_per_tooth, number_of_teeth, clearance, interior);
-	r = root_radius(mm_per_tooth, number_of_teeth, clearance, interior);
-	b = base_radius(mm_per_tooth, number_of_teeth, pressure_angle);
-	t  = mm_per_tooth/2-backlash/2;               //tooth thickness at pitch circle
-	k  = -iang(b, p) - t/2/p/PI*180;              //angle to where involute meets base circle on each side of tooth
-	scale([1, 1/cos(bevelang), 1])
-	translate([0,-r,0])
-	polygon(
-		points=[
-			polar(r-1, -181/number_of_teeth),
-			polar(r, -181/number_of_teeth),
-			polar(r, r<b ? k : -180/number_of_teeth),
-			q7(0/5,r,b,c,k, 1),q7(1/5,r,b,c,k, 1),q7(2/5,r,b,c,k, 1),q7(3/5,r,b,c,k, 1),q7(4/5,r,b,c,k, 1),q7(5/5,r,b,c,k, 1),
-			q7(5/5,r,b,c,k,-1),q7(4/5,r,b,c,k,-1),q7(3/5,r,b,c,k,-1),q7(2/5,r,b,c,k,-1),q7(1/5,r,b,c,k,-1),q7(0/5,r,b,c,k,-1),
-			polar(r, r<b ? -k : 180/number_of_teeth),
-			polar(r, 181/number_of_teeth),
-			polar(r-1, 181/number_of_teeth),
-		]
+	path = gear_tooth_profile(
+		mm_per_tooth    = mm_per_tooth,
+		number_of_teeth = number_of_teeth,
+		pressure_angle  = pressure_angle,
+		backlash        = backlash,
+		bevelang        = bevelang,
+		clearance       = clearance,
+		interior        = interior
 	);
+	polygon(path);
 }
 
 
@@ -205,6 +222,37 @@ module gear_tooth_profile(
 //   gear2d(mm_per_tooth=5, number_of_teeth=20, pressure_angle=20);
 // Example(2D): Partial Gear
 //   gear2d(mm_per_tooth=5, number_of_teeth=20, teeth_to_hide=15, pressure_angle=20);
+function gear2d(
+	mm_per_tooth    = 3,     //this is the "circular pitch", the circumference of the pitch circle divided by the number of teeth
+	number_of_teeth = 11,    //total number of teeth around the entire perimeter
+	teeth_to_hide   = 0,     //number of teeth to delete to make this only a fraction of a circle
+	pressure_angle  = 28,    //Controls how straight or bulged the tooth sides are. In degrees.
+	clearance       = undef, //gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
+	backlash        = 0.0,   //gap between two meshing teeth, in the direction along the circumference of the pitch circle
+	bevelang        = 0.0,
+	interior        = false
+) = let(
+		r = root_radius(mm_per_tooth, number_of_teeth, clearance, interior),
+		ang = 360/number_of_teeth/2,
+		pts = [
+			for (i = [0:1:number_of_teeth-teeth_to_hide-1] ) let(
+				mat = matrix3_zrot(-i*360/number_of_teeth) * matrix3_translate([0,r,0])
+			) each matrix3_apply(
+				gear_tooth_profile(
+					mm_per_tooth    = mm_per_tooth,
+					number_of_teeth = number_of_teeth,
+					pressure_angle  = pressure_angle,
+					clearance       = clearance,
+					backlash        = backlash,
+					bevelang        = bevelang,
+					interior        = interior
+				), [mat]
+			),
+			if (teeth_to_hide>0) [0,0]
+		]
+	) pts;
+
+
 module gear2d(
 	mm_per_tooth    = 3,     //this is the "circular pitch", the circumference of the pitch circle divided by the number of teeth
 	number_of_teeth = 11,    //total number of teeth around the entire perimeter
@@ -215,30 +263,17 @@ module gear2d(
 	bevelang        = 0.0,
 	interior        = false
 ) {
-	r = root_radius(mm_per_tooth, number_of_teeth, clearance, interior);
-	ang = 360/number_of_teeth/2;
-	union() {
-		for (i = [0:number_of_teeth-teeth_to_hide-1] ) {
-			rotate(i*360/number_of_teeth) {
-				translate([0,r,0]) {
-					gear_tooth_profile(
-						mm_per_tooth    = mm_per_tooth,
-						number_of_teeth = number_of_teeth,
-						pressure_angle  = pressure_angle,
-						clearance       = clearance,
-						backlash        = backlash,
-						bevelang        = bevelang,
-						interior        = interior
-					);
-				}
-				polygon([
-					[-r*sin(ang), r*cos(ang)],
-					[0,0],
-					[r*sin(ang), r*cos(ang)]
-				]);
-			}
-		}
-	}
+	path = gear2d(
+		mm_per_tooth    = mm_per_tooth,
+		number_of_teeth = number_of_teeth,
+		teeth_to_hide   = teeth_to_hide,
+		pressure_angle  = pressure_angle,
+		clearance       = clearance,
+		backlash        = backlash,
+		bevelang        = bevelang,
+		interior        = interior
+	);
+	polygon(path);
 }
 
 
