@@ -95,7 +95,7 @@ module cuboid(
 	size = scalar_vec3(size);
 	if (is_def(p1)) {
 		if (is_def(p2)) {
-			translate([for (v=array_zip([p1,p2],0)) min(v)]) {
+			translate([for (v=array_zip([p1,p2],fill=0)) min(v)]) {
 				cuboid(size=vabs(p2-p1), chamfer=chamfer, fillet=fillet, edges=edges, trimcorners=trimcorners, align=V_ALLPOS);
 			}
 		} else {
