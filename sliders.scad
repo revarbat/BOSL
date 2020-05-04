@@ -54,6 +54,7 @@ include <constants.scad>
 //   l = Length (long axis) of slider.
 //   w = Width of slider.
 //   h = Height of slider.
+//   chamfer = Size of chamfer
 //   base = Height of slider base.
 //   wall = Width of wall behind each side of the slider.
 //   ang = Overhang angle for slider, to facilitate supportless printig.
@@ -62,7 +63,7 @@ include <constants.scad>
 //   align = Alignment of the slider.  Use the `V_` constants from `constants.scad`.  Default: `V_UP`.
 // Example:
 //   slider(l=30, base=10, wall=4, slop=0.2, orient=ORIENT_Y);
-module slider(l=30, w=10, h=10, base=10, wall=5, ang=30, slop=PRINTER_SLOP, orient=ORIENT_Y, align=V_UP)
+module slider(l=30, w=10, h=10, chamfer=2, base=10, wall=5, ang=30, slop=PRINTER_SLOP, orient=ORIENT_Y, align=V_UP)
 {
 	full_width = w + 2*wall;
 	full_height = h + base;
@@ -70,11 +71,11 @@ module slider(l=30, w=10, h=10, base=10, wall=5, ang=30, slop=PRINTER_SLOP, orie
 	orient_and_align([full_width, l, h+2*base], orient, align, orig_orient=ORIENT_Y) {
 		down(base+h/2) {
 			// Base
-			cuboid([full_width, l, base-slop], chamfer=2, edges=EDGE_TOP_FR+EDGE_TOP_BK+EDGES_Z_ALL, align=V_UP);
+			cuboid([full_width, l, base-slop], chamfer=chamfer, edges=EDGE_TOP_FR+EDGE_TOP_BK+EDGES_Z_ALL, align=V_UP);
 
 			// Wall
 			xflip_copy(offset=w/2+slop) {
-				cuboid([wall, l, full_height], chamfer=2, edges=EDGE_TOP_RT+EDGE_FR_RT+EDGE_BK_RT, align=V_UP+V_RIGHT);
+				cuboid([wall, l, full_height], chamfer=chamfer, edges=EDGE_TOP_RT+EDGE_FR_RT+EDGE_BK_RT, align=V_UP+V_RIGHT);
 			}
 
 			// Sliders
