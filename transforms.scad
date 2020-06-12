@@ -1042,8 +1042,9 @@ module zdistribute(spacing=10, sizes=undef, l=undef)
 //   %polygon(poly);
 //
 // Example:
-//   // Makes a grid of hexagon pillars whose tops are all
-//   // angled to reflect light at [0,0,50], if they were shiny.
+//   // Makes a grid of hexagon pillars whose tops are all angled
+//   // to reflect light at [0,0,50], if they were reflective.
+//   use <BOSL/math.scad>
 //   hexregion = [for (a = [0:60:359.9]) 50.01*[cos(a), sin(a)]];
 //   grid2d(spacing=10, stagger=true, in_poly=hexregion) {
 //       // Note: You must use for(var=[val]) or let(var=val)
