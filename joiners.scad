@@ -117,7 +117,6 @@ module half_joiner(h=20, w=10, l=10, a=30, screwsize=undef, guides=true, slop=PR
 			half_joiner_clear(h=h, w=w, a=a, clearance=0.1, overlap=0.01, orient=orient, align=align);
 		}
 	}
-	render(convexity=12)
 	orient_and_align([w, 2*l, h], orient, align, orig_orient=ORIENT_Y) {
 		difference() {
 			union() {
@@ -200,7 +199,6 @@ module half_joiner2(h=20, w=10, l=10, a=30, screwsize=undef, guides=true, orient
 		}
 	}
 
-	render(convexity=12)
 	orient_and_align([w, 2*l, h], orient, align, orig_orient=ORIENT_Y) {
 		difference() {
 			union () {
