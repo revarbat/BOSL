@@ -106,4 +106,8 @@ ENV/
 # Vim temp files
 .*.swp
 
+BOSL.wiki
+foo.scad
+ref
+
 

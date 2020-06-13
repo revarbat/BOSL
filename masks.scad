@@ -422,7 +422,6 @@ module fillet_mask(l=undef, r=1.0, orient=ORIENT_Z, align=V_CENTER, h=undef, cen
 //   l = Length of mask.
 //   r = Radius of the fillet.
 //   align = Alignment of the mask.  Use the `V_` constants from `constants.h`.  Default: centered.
-//   center = If true, centers vertically.  If false, lift up to sit on top of the XY plane.  Overrides `align`.
 // Example:
 //   difference() {
 //       cube(size=100, center=false);
@@ -443,7 +442,6 @@ module fillet_mask_x(l=1.0, r=1.0, align=V_CENTER) fillet_mask(l=l, r=r, orient=
 //   l = Length of mask.
 //   r = Radius of the fillet.
 //   align = Alignment of the mask.  Use the `V_` constants from `constants.h`.  Default: centered.
-//   center = If true, centers vertically.  If false, lift up to sit on top of the XY plane.  Overrides `align`.
 // Example:
 //   difference() {
 //       cube(size=100, center=false);
@@ -464,7 +462,6 @@ module fillet_mask_y(l=1.0, r=1.0, align=V_CENTER) fillet_mask(l=l, r=r, orient=
 //   l = Length of mask.
 //   r = Radius of the fillet.
 //   align = Alignment of the mask.  Use the `V_` constants from `constants.h`.  Default: centered.
-//   center = If true, centers vertically.  If false, lift up to sit on top of the XY plane.  Overrides `align`.
 // Example:
 //   difference() {
 //       cube(size=100, center=false);
