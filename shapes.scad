@@ -159,7 +159,9 @@ module cuboid(
 					minkowski() {
 						cube(isize, center=true);
 						if (trimcorners) {
-							sphere(r=fillet*sc, $fn=sides);
+							rotate_extrude(convexity=2,$fn=sides) {
+								polygon([for (i=[0:1:sides/2]) let(a=i*360/sides-90) fillet*sc*[cos(a),sin(a)]]);
+							}
 						} else {
 							intersection() {
 								zrot(180/sides) cylinder(r=fillet*sc, h=fillet*2, center=true, $fn=sides);
