@@ -146,6 +146,7 @@ function base_radius(mm_per_tooth=5, number_of_teeth=11, pressure_angle=28)
 //   bevelang = Angle of beveled gear face.
 //   clearance = Gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
 //   interior = If true, create a mask for difference()ing from something else.
+//   valleys = If true, adds valley extentions to the base of the gear tooth.  Default: true
 // Example(2D):
 //   gear_tooth_profile(mm_per_tooth=5, number_of_teeth=20, pressure_angle=20);
 function _gear_polar(r,theta)   = r*[sin(theta), cos(theta)];                      //convert polar to cartesian coordinates
@@ -159,7 +160,8 @@ function gear_tooth_profile(
 	backlash        = 0.0,   //gap between two meshing teeth, in the direction along the circumference of the pitch circle
 	bevelang        = 0.0,   //Gear face angle for bevelled gears.
 	clearance       = undef, //gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
-	interior        = false
+	interior        = false,
+	valleys         = true
 ) = let(
 		p = pitch_radius(mm_per_tooth, number_of_teeth),
 		c = outer_radius(mm_per_tooth, number_of_teeth, clearance, interior),
@@ -169,12 +171,12 @@ function gear_tooth_profile(
 		k  = -_gear_iang(b, p) - t/2/p/PI*180,              //angle to where involute meets base circle on each side of tooth
 		mat = matrix3_scale([1,1/cos(bevelang), 1]) * matrix3_translate([0,-r,0]),
 		points=[
-			_gear_polar(r, -181/number_of_teeth),
+			if(valleys) _gear_polar(r, -181/number_of_teeth),
 			_gear_polar(r, r<b ? k : -180/number_of_teeth),
 			_gear_q7(0/5,r,b,c,k, 1), _gear_q7(1/5,r,b,c,k, 1), _gear_q7(2/5,r,b,c,k, 1), _gear_q7(3/5,r,b,c,k, 1), _gear_q7(4/5,r,b,c,k, 1), _gear_q7(5/5,r,b,c,k, 1),
 			_gear_q7(5/5,r,b,c,k,-1), _gear_q7(4/5,r,b,c,k,-1), _gear_q7(3/5,r,b,c,k,-1), _gear_q7(2/5,r,b,c,k,-1), _gear_q7(1/5,r,b,c,k,-1), _gear_q7(0/5,r,b,c,k,-1),
 			_gear_polar(r, r<b ? -k : 180/number_of_teeth),
-			_gear_polar(r, 181/number_of_teeth),
+			if(valleys) _gear_polar(r, 181/number_of_teeth),
 		]
 	) matrix3_apply(points, [mat]);
 
@@ -186,7 +188,8 @@ module gear_tooth_profile(
 	backlash        = 0.0,   //gap between two meshing teeth, in the direction along the circumference of the pitch circle
 	bevelang        = 0.0,   //Gear face angle for bevelled gears.
 	clearance       = undef, //gap between top of a tooth on one gear and bottom of valley on a meshing gear (in millimeters)
-	interior        = false
+	interior        = false,
+	valleys         = true
 ) {
 	path = gear_tooth_profile(
 		mm_per_tooth    = mm_per_tooth,
@@ -195,7 +198,8 @@ module gear_tooth_profile(
 		backlash        = backlash,
 		bevelang        = bevelang,
 		clearance       = clearance,
-		interior        = interior
+		interior        = interior,
+		valleys         = valleys
 	);
 	polygon(path);
 }
@@ -245,7 +249,8 @@ function gear2d(
 					clearance       = clearance,
 					backlash        = backlash,
 					bevelang        = bevelang,
-					interior        = interior
+					interior        = interior,
+					valleys         = false
 				), [mat]
 			),
 			if (teeth_to_hide>0) [0,0]
@@ -459,7 +464,6 @@ d14=pitch_radius(mm_per_tooth,n1) + pitch_radius(mm_per_tooth,n4);
 
 translate([ 0,    0, 0]) rotate([0,0, $t*360/n1])                 color([1.00,0.75,0.75]) gear(mm_per_tooth,n1,thickness,hole);
 translate([ 0,  d12, 0]) rotate([0,0,-($t+n2/2-0*n1+1/2)*360/n2]) color([0.75,1.00,0.75]) gear(mm_per_tooth,n2,thickness,hole);
-translate([ d13,  0, 0]) rotate([0,0,-($t-n3/4+n1/4+1/2)*360/n3]) color([0.75,0.75,1.00]) gear(mm_per_tooth,n3,thickness,hole);
 translate([ d13,  0, 0]) rotate([0,0,-($t-n3/4+n1/4+1/2)*360/n3]) color([0.75,0.75,1.00]) gear(mm_per_tooth,n3,thickness,hole);
 translate([-d14,  0, 0]) rotate([0,0,-($t-n4/4-n1/4+1/2-floor(n4/4)-3)*360/n4]) color([1.00,0.75,0.50]) gear(mm_per_tooth,n4,thickness,hole,teeth_to_hide=n4-3);
 translate([(-floor(n5/2)-floor(n1/2)+$t+n1/2-1/2)*9, -d1+0.0, 0]) rotate([0,0,0]) color([0.75,0.75,0.75]) rack(mm_per_tooth,n5,thickness,height);
