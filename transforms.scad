@@ -685,7 +685,7 @@ module line_of(p1=[0,0,0], p2=[10,0,0], n=2)
 //       cube(size=[1,3,1],center=true);
 //       cube(size=[3,1,1],center=true);
 //   }
-module spread(p1=undef, p2=undef, spacing=undef, l=undef, n=undef)
+module spread(p1, p2, spacing, l, n)
 {
 	ll = (
 		is_def(l)? scalar_vec3(l, 0) :
@@ -745,7 +745,11 @@ module spread(p1=undef, p2=undef, spacing=undef, l=undef, n=undef)
 //   }
 module xspread(spacing=undef, n=undef, l=undef, sp=undef)
 {
-	spread(l=l*V_RIGHT, spacing=spacing*V_RIGHT, n=n, p1=sp) children();
+	spread(
+		l=is_undef(l)? l : l*V_RIGHT,
+		spacing=is_undef(spacing)? spacing : spacing*V_RIGHT,
+		n=n, p1=sp
+	) children();
 }
 
 
@@ -780,7 +784,11 @@ module xspread(spacing=undef, n=undef, l=undef, sp=undef)
 //   }
 module yspread(spacing=undef, n=undef, l=undef, sp=undef)
 {
-	spread(l=l*V_BACK, spacing=spacing*V_BACK, n=n, p1=sp) children();
+	spread(
+		l=is_undef(l)? l : l*V_BACK,
+		spacing=is_undef(spacing)? spacing : spacing*V_BACK,
+		n=n, p1=sp
+	) children();
 }
 
 
@@ -815,7 +823,11 @@ module yspread(spacing=undef, n=undef, l=undef, sp=undef)
 //   }
 module zspread(spacing=undef, n=undef, l=undef, sp=undef)
 {
-	spread(l=l*V_UP, spacing=spacing*V_UP, n=n, p1=sp) children();
+	spread(
+		l=is_undef(l)? l : l*V_UP,
+		spacing=is_undef(spacing)? spacing : spacing*V_UP,
+		n=n, p1=sp
+	) children();
 }
 
 
