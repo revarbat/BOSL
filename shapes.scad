@@ -2014,7 +2014,7 @@ module noop() children();
 //   pie_slice(ang=60, l=20, d1=50, d2=70);
 module pie_slice(
 	ang=30, l=undef,
-	r=10, r1=undef, r2=undef,
+	r=undef, r1=undef, r2=undef,
 	d=undef, d1=undef, d2=undef,
 	orient=ORIENT_Z, align=ALIGN_POS,
 	center=undef, h=undef
