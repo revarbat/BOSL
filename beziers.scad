@@ -99,6 +99,29 @@ function bez_point(curve,u)=
 			u
 		);
 
+// Function: bez_tangent()
+// Usage:
+//   bez_tangent(curve, u)
+// Description:
+//   Calculate the tangent vector at a point on a bezier curve.
+// Arguments:
+//   curve = The list of endpoints and control points for this bezier segment.
+//   u = The proportion of the way along the curve to find the point of.  0<=`u`<=1
+// Example(2D): Cubic (degree 3) bezier tangent
+//   bez = [[0,0], [5,35], [60,-25], [80,0]];
+//   point = bez_point(bez, 0.2);
+//   tangent = bez_tangent(bez, 0.2) * 10;
+//   trace_bezier(bez, N=len(bez)-1);
+//   color("red") translate(point) extrude_from_to(-tangent, tangent) circle(d=.5);
+function bez_tangent(curve, u) = (
+	len(curve) <= 2
+		? normalize(u * (curve[1] - curve[0]))
+		: bez_tangent([
+			for(i=[0:len(curve)-2])
+				curve[i] * (1 - u) +
+				curve[i + 1] * u
+		], u)
+);
 
 // Function: bezier_segment_closest_point()
 // Usage:
