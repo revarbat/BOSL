@@ -1208,10 +1208,10 @@ module tube(
 	center=undef, orient=ORIENT_Z, align=ALIGN_POS,
 	realign=false
 ) {
-	r1 = first_defined([or1, od1/2, r1, d1/2, or, od/2, r, d/2, ir1+wall, id1/2+wall, ir+wall, id/2+wall]);
-	r2 = first_defined([or2, od2/2, r2, d2/2, or, od/2, r, d/2, ir2+wall, id2/2+wall, ir+wall, id/2+wall]);
-	ir1 = first_defined([ir1, id1/2, ir, id/2, r1-wall, d1/2-wall, r-wall, d/2-wall]);
-	ir2 = first_defined([ir2, id2/2, ir, id/2, r2-wall, d2/2-wall, r-wall, d/2-wall]);
+	r1 = first_defined([or1, od1==undef?undef:od1/2, r1, d1==undef?undef:d1/2, or, od==undef?undef:od/2, r, d==undef?undef:d/2, ir1==undef||wall==undef?undef:ir1+wall, id1==undef||wall==undef?undef:id1/2+wall, ir==undef||wall==undef?undef:ir+wall, id==undef||wall==undef?undef:id/2+wall]);
+	r2 = first_defined([or2, od2==undef?undef:od2/2, r2, d2==undef?undef:d2/2, or, od==undef?undef:od/2, r, d==undef?undef:d/2, ir2==undef||wall==undef?undef:ir2+wall, id2==undef||wall==undef?undef:id2/2+wall, ir==undef||wall==undef?undef:ir+wall, id==undef||wall==undef?undef:id/2+wall]);
+	ir1 = first_defined([ir1, id1==undef?undef:id1/2, ir, id==undef?undef:id/2, r1==undef||wall==undef?undef:r1-wall, d1==undef||wall==undef?undef:d1/2-wall, r==undef||wall==undef?undef:r-wall, d==undef||wall==undef?undef:d/2-wall]);
+	ir2 = first_defined([ir2, id2==undef?undef:id2/2, ir, id==undef?undef:id/2, r2==undef||wall==undef?undef:r2-wall, d2==undef||wall==undef?undef:d2/2-wall, r==undef||wall==undef?undef:r-wall, d==undef||wall==undef?undef:d/2-wall]);
 	assertion(ir1 <= r1, "Inner radius is larger than outer radius.");
 	assertion(ir2 <= r2, "Inner radius is larger than outer radius.");
 	sides = segs(max(r1,r2));
