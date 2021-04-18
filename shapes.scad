@@ -1219,7 +1219,20 @@ module tube(
 		zrot(realign? 180/sides : 0) {
 			difference() {
 				cylinder(h=h, r1=r1, r2=r2, center=true, $fn=sides);
-				cylinder(h=h+0.05, r1=ir1, r2=ir2, center=true);
+				if (ir1 == ir2) {
+					cylinder(h=h+2, r1=ir1, r2=ir2, center=true);
+				} else {
+					cylinder(h=h+2, r=min(ir1,ir2), center=true);
+					diff = abs(ir1-ir2);
+					diff2 = diff*(h+1)/h;
+					if (ir1 > ir2) {
+						zmove(-0.5)
+							cylinder(h=h+1, r1=ir2+diff2, r2=ir2, center=true);
+					} else {
+						zmove(0.5)
+							cylinder(h=h+1, r1=ir1, r2=ir1+diff2, center=true);
+					}
+				}
 			}
 		}
 	}
