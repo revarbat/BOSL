@@ -59,7 +59,9 @@ use <math.scad>
 //   thread_depth = Depth of the threads.  Default=pitch/2
 //   thread_angle = The pressure angle profile angle of the threads.  Default = 14.5 degree ACME profile.
 //   left_handed = If true, create left-handed threads.  Default = false
-//   bevel = if true, bevel the thread ends.  Default: true
+//   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   starts = The number of lead starts.  Default = 1
 //   internal = If true, make this a mask for making internal threads.
 //   slop = printer slop calibration to allow for tight fitting of parts.  Default: `PRINTER_SLOP`
@@ -85,6 +87,8 @@ module trapezoidal_threaded_rod(
 	thread_depth=undef,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	starts=1,
 	profile=undef,
 	internal=false,
@@ -232,7 +236,11 @@ module trapezoidal_threaded_rod(
 		difference() {
 			polyhedron(points=poly_points, faces=poly_faces, convexity=threads*starts*2);
 			zspread(l+4*pitch*starts) cube([d+1, d+1, 4*pitch*starts], center=true);
-			if (bevel) cylinder_mask(d=d, l=l+0.01, chamfer=depth);
+			if (bevel || bevel1 || bevel2) {
+				depth1 = (bevel || bevel1) ? depth : 0;
+				depth2 = (bevel || bevel2) ? depth : 0;
+				cylinder_mask(d=d, l=l+0.01, chamfer1=depth1, chamfer2=depth2);
+			}
 		}
 	}
 }
@@ -321,6 +329,8 @@ module trapezoidal_threaded_nut(
 //   pitch = Length between threads.
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   internal = If true, make this a mask for making internal threads.
 //   slop = printer slop calibration to allow for tight fitting of parts.  Default: `PRINTER_SLOP`
 //   orient = Orientation of the rod.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
@@ -335,6 +345,8 @@ module threaded_rod(
 	d=10, l=100, pitch=2,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	internal=false,
 	slop=undef,
 	orient=ORIENT_Z,
@@ -363,6 +375,8 @@ module threaded_rod(
 		profile=profile,
 		left_handed=left_handed,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		internal=internal,
 		slop=slop,
 		orient=orient,
@@ -426,6 +440,8 @@ module threaded_nut(
 //   pitch = Length between threads.
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   internal = If true, this is a mask for making internal threads.
 //   slop = printer slop calibration to allow for tight fitting of parts.  default=0.2
 //   orient = Orientation of the rod.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
@@ -440,6 +456,8 @@ module buttress_threaded_rod(
 	d=10, l=100, pitch=2,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	internal=false,
 	slop=undef,
 	orient=ORIENT_Z,
@@ -460,6 +478,8 @@ module buttress_threaded_rod(
 		profile=profile,
 		left_handed=left_handed,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		internal=internal,
 		orient=orient,
 		slop=slop,
@@ -536,6 +556,8 @@ module metric_trapezoidal_threaded_rod(
 	left_handed=false,
 	starts=1,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	orient=ORIENT_Z,
 	align=V_CENTER
 ) {
@@ -546,6 +568,8 @@ module metric_trapezoidal_threaded_rod(
 		left_handed=left_handed,
 		starts=starts,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		orient=orient,
 		align=align
 	);
@@ -608,6 +632,8 @@ module metric_trapezoidal_threaded_nut(
 //   starts = The number of lead starts.  Default = 1
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   orient = Orientation of the rod.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
 //   align = Alignment of the rod.  Use the `V_` constants from `constants.scad`.  Default: `V_CENTER`.
 // Example(2D):
@@ -623,6 +649,8 @@ module acme_threaded_rod(
 	starts=1,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	orient=ORIENT_Z,
 	align=V_CENTER
 ) {
@@ -633,6 +661,8 @@ module acme_threaded_rod(
 		starts=starts,
 		left_handed=left_handed,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		orient=orient,
 		align=align
 	);
@@ -696,6 +726,8 @@ module acme_threaded_nut(
 //   pitch = Length between threads.
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   starts = The number of lead starts.  Default = 1
 //   orient = Orientation of the rod.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
 //   align = Alignment of the rod.  Use the `V_` constants from `constants.scad`.  Default: `V_CENTER`.
@@ -708,6 +740,8 @@ module square_threaded_rod(
 	d=10, l=100, pitch=2,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	starts=1,
 	orient=ORIENT_Z,
 	align=V_CENTER
@@ -717,6 +751,8 @@ module square_threaded_rod(
 		thread_angle=0,
 		left_handed=left_handed,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		starts=starts,
 		orient=orient,
 		align=align
@@ -736,6 +772,8 @@ module square_threaded_rod(
 //   pitch = Length between threads.
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
+//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
+//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   starts = The number of lead starts.  Default = 1
 //   slop = printer slop calibration to allow for tight fitting of parts.  default=0.2
 //   orient = Orientation of the nut.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
@@ -747,6 +785,8 @@ module square_threaded_nut(
 	pitch=3.175,
 	left_handed=false,
 	bevel=false,
+	bevel1=false,
+	bevel2=false,
 	starts=1,
 	slop=undef,
 	orient=ORIENT_Z,
@@ -757,6 +797,8 @@ module square_threaded_nut(
 		thread_angle=0,
 		left_handed=left_handed,
 		bevel=bevel,
+		bevel1=bevel1,
+		bevel2=bevel2,
 		starts=starts,
 		slop=slop,
 		orient=orient,
