@@ -1324,20 +1324,18 @@ module staggered_sphere(r=undef, d=undef, circum=false, align=V_CENTER) {
 	pcnt = len(pts);
 	faces = concat(
 		[
-			for (i = [1:sides]) each [
-				[0, i%sides+1, i],
-				[pcnt-1, pcnt-1-(i%sides+1), pcnt-1-i]
-			]
+			for (i = [1:sides], j=[0,1])
+			j? [0, i%sides+1, i] : [pcnt-1, pcnt-1-(i%sides+1), pcnt-1-i]
 		],
 		[
-			for (p = [0:vsides-4], i = [0:sides-1]) let(
+			for (p = [0:vsides-4], i = [0:sides-1], j=[0,1]) let(
 				b1 = 1+p*sides,
 				b2 = 1+(p+1)*sides,
 				v1 = b1+i,
 				v2 = b1+(i+1)%sides,
 				v3 = b2+((i+((p%2)?(sides-1):0))%sides),
 				v4 = b2+((i+1+((p%2)?(sides-1):0))%sides)
-			) each [[v1,v4,v3], [v1,v2,v4]]
+			) j? [v1,v4,v3] : [v1,v2,v4]
 		]
 	);
 	zrot((floor(sides/4)%2==1)? 180/sides : 0) polyhedron(points=pts, faces=faces);
