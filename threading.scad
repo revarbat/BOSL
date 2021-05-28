@@ -772,8 +772,6 @@ module square_threaded_rod(
 //   pitch = Length between threads.
 //   left_handed = if true, create left-handed threads.  Default = false
 //   bevel = if true, bevel the thread ends.  Default: false
-//   bevel1 = if true, bevel the axis-negative end of the thread.  Default: false
-//   bevel2 = if true, bevel the axis-positive end of the thread.  Default: false
 //   starts = The number of lead starts.  Default = 1
 //   slop = printer slop calibration to allow for tight fitting of parts.  default=0.2
 //   orient = Orientation of the nut.  Use the `ORIENT_` constants from `constants.scad`.  Default: `ORIENT_Z`.
@@ -785,8 +783,6 @@ module square_threaded_nut(
 	pitch=3.175,
 	left_handed=false,
 	bevel=false,
-	bevel1=false,
-	bevel2=false,
 	starts=1,
 	slop=undef,
 	orient=ORIENT_Z,
@@ -797,8 +793,6 @@ module square_threaded_nut(
 		thread_angle=0,
 		left_handed=left_handed,
 		bevel=bevel,
-		bevel1=bevel1,
-		bevel2=bevel2,
 		starts=starts,
 		slop=slop,
 		orient=orient,
