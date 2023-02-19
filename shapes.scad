@@ -694,7 +694,7 @@ module right_triangle(size=[1, 1, 1], orient=ORIENT_Y, align=V_ALLPOS, center=un
 // Description:
 //   Creates cylinders in various alignments and orientations,
 //   with optional fillets and chamfers. You can use `r` and `l`
-//   interchangably, and all variants allow specifying size
+//   interchangeably, and all variants allow specifying size
 //   by either `r`|`d`, or `r1`|`d1` and `r2`|`d2`.
 //   Note that that chamfers and fillets cannot cross the
 //   midpoint of the cylinder's length.
