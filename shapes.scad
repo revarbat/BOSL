@@ -2121,12 +2121,13 @@ module interior_fillet(l=1.0, r=1.0, ang=90, overlap=0.01, orient=ORIENT_X, alig
 module slot(
 	p1=undef, p2=undef, h=10, l=undef,
 	r=undef, r1=undef, r2=undef,
-	d=undef, d1=undef, d2=undef
+	d=undef, d1=undef, d2=undef,
+	orient=undef
 ) {
 	r1 = get_radius(r1=r1, r=r, d1=d1, d=d, dflt=5);
 	r2 = get_radius(r1=r2, r=r, d1=d2, d=d, dflt=5);
 	sides = quantup(segs(max(r1, r2)), 4);
-	hull() spread(p1=p1, p2=p2, l=l, n=2) cyl(l=h, r1=r1, r2=r2, center=true, $fn=sides);
+	hull() spread(p1=p1, p2=p2, l=l, n=2) cyl(l=h, r1=r1, r2=r2, center=true, $fn=sides, orient=orient);
 }
 
 
